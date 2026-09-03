@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHESS_CRASH.exe // 1v1_PROTOCOL</title>
+    <title>CHESS</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
         body {
             font-family: 'VT323', monospace;
-            background-color: #030303;
-            color: #00FF00;
+            background-color: #050508;
+            color: #00FF66;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -26,7 +26,7 @@
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
             z-index: 1000;
             background-size: 100% 4px, 6px 100%;
             pointer-events: none;
@@ -46,37 +46,15 @@
             animation: glitch 0.15s infinite;
         }
 
-        /* En-tête textuel global au-dessus du jeu */
-        #top-game-header {
-            text-align: center;
-            margin-bottom: 10px;
-            z-index: 10;
-        }
-
-        #top-game-header h1 {
-            font-size: 28px;
-            color: #00FF00;
-            text-shadow: 0 0 10px #00FF00;
-            margin: 0 0 5px 0;
-            letter-spacing: 2px;
-        }
-
-        #top-game-header p {
-            font-size: 18px;
-            color: #FFFF00;
-            margin: 0;
-            text-shadow: 0 0 5px #FFFF00;
-        }
-
         .main-container {
             display: flex;
             flex-direction: row;
             gap: 20px;
-            background: #0a0a0e;
+            background: #0d0d14;
             padding: 20px;
-            border: 3px solid #00FF00;
-            border-radius: 6px;
-            box-shadow: 0 0 35px rgba(0, 255, 0, 0.4), inset 0 0 20px rgba(0, 255, 0, 0.1);
+            border: 2px solid #00AA44;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.15), inset 0 0 15px rgba(0, 255, 102, 0.05);
             z-index: 10;
         }
 
@@ -88,22 +66,21 @@
         }
 
         #info-panel {
-            margin-bottom: 10px;
-            font-size: 22px;
+            margin-bottom: 12px;
+            font-size: 20px;
             font-weight: bold;
-            color: #FFFF00;
-            text-shadow: 2px 2px #000000;
+            color: #FFFF55;
+            text-shadow: 1px 1px #000000;
             text-align: center;
             letter-spacing: 1px;
         }
 
-        /* Échiquier agrandi (cases de 75px) */
         #board {
             display: grid;
             grid-template-columns: repeat(8, 75px);
             grid-template-rows: repeat(8, 75px);
-            border: 4px solid #00FF00;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            border: 3px solid #00AA44;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
             background-color: #0b0b0f;
         }
 
@@ -119,28 +96,26 @@
             transition: background 0.1s;
         }
 
-        /* Couleurs saturées Vert et Blanc, pas de rose, pièces contrastées */
-        .light { background-color: #2E8B57; color: #FFFFFF; text-shadow: 0 0 6px rgba(0,0,0,0.8); }
-        .dark { background-color: #004d1a; color: #00FF00; text-shadow: 0 0 8px rgba(0,255,0,0.6); }
-        .selected { background-color: #FFFF00 !important; color: #030303 !important; }
+        .light { background-color: #3b7a57; color: #FFFFFF; text-shadow: 0 0 8px rgba(255,255,255,0.6); }
+        .dark { background-color: #1b4332; color: #111111; text-shadow: 0 0 8px rgba(0,0,0,0.9); }
+        .selected { background-color: #FFE600 !important; color: #000000 !important; }
 
-        /* Panel de discussion plus petit, positionné sur le côté en haut */
         .chat-container {
-            width: 300px;
+            width: 320px;
             height: 608px;
             display: flex;
             flex-direction: column;
-            background: #060608;
-            border: 2px solid #00FF00;
-            border-radius: 4px;
-            box-shadow: 0 0 20px rgba(0,255,0,0.25);
+            background: #08080c;
+            border: 2px solid #00AA44;
+            border-radius: 6px;
+            box-shadow: 0 0 15px rgba(0,170,68,0.15);
             overflow: hidden;
         }
 
         .chat-header {
-            background: #00FF00;
+            background: #00AA44;
             color: #050505;
-            padding: 6px;
+            padding: 8px;
             font-size: 18px;
             font-weight: bold;
             text-align: center;
@@ -158,43 +133,43 @@
         }
 
         .message {
-            padding: 5px 8px;
-            border-radius: 2px;
+            padding: 6px 10px;
+            border-radius: 4px;
             max-width: 90%;
             word-break: break-word;
         }
 
         .message.user {
-            background: #008000;
+            background: #1b4d3e;
             color: #ffffff;
             align-self: flex-end;
-            box-shadow: 2px 2px 0px #00FF00;
+            box-shadow: 1px 1px 0px #00AA44;
         }
 
         .message.ai {
-            background: #121222;
-            color: #00FF00;
+            background: #12121c;
+            color: #00FF66;
             align-self: flex-start;
-            border-left: 3px solid #00FF00;
+            border-left: 3px solid #00AA44;
         }
 
         .chat-inputs {
             padding: 8px;
-            background: #0d0d12;
-            border-top: 2px solid #00FF00;
+            background: #0a0a10;
+            border-top: 2px solid #00AA44;
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            max-height: 150px;
+            gap: 6px;
+            max-height: 180px;
             overflow-y: auto;
         }
 
         .dialog-btn {
-            background: #181822;
-            color: #00FF00;
-            border: 1px solid #00FF00;
-            padding: 6px;
-            border-radius: 2px;
+            background: #14141e;
+            color: #00FF66;
+            border: 1px solid #00AA44;
+            padding: 8px;
+            border-radius: 4px;
             cursor: pointer;
             text-align: left;
             font-family: 'VT323', monospace;
@@ -203,25 +178,20 @@
         }
 
         .dialog-btn:hover {
-            background: #00FF00;
+            background: #00AA44;
             color: #050505;
-            box-shadow: 0 0 10px #00FF00;
+            box-shadow: 0 0 8px #00AA44;
         }
 
         #knife-canvas {
             display: none;
             background: #020204;
-            border: 4px solid #00FF00;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.8);
+            border: 3px solid #00AA44;
+            box-shadow: 0 0 25px rgba(0, 170, 68, 0.6);
         }
     </style>
 </head>
 <body>
-
-<div id="top-game-header">
-    <h1>CHESS_CRASH // PROTOCOLE DE COMBAT</h1>
-    <p>Affrontez l'IA corrompue sur l'échiquier sécurisé. Discutez avec le terminal à droite.</p>
-</div>
 
 <div class="main-container" id="mainContainer">
     <div class="game-area">
@@ -231,9 +201,9 @@
     </div>
 
     <div class="chat-container">
-        <div class="chat-header">TERMINAL_AI</div>
+        <div class="chat-header">TERMINAL</div>
         <div class="chat-messages" id="chatMessages">
-            <div class="message ai">Connexion établie. Tente de survivre sur cet échiquier.</div>
+            <div class="message ai">Salut ! Tu passes une bonne journée ?</div>
         </div>
         <div class="chat-inputs" id="dialogButtonsContainer"></div>
     </div>
@@ -244,7 +214,7 @@
 
     function initAudio() {
         if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            audioCtx =[cite: 7]new (window.AudioContext || window.webkitAudioContext)();
             startAmbientDrone();
         }
     }
@@ -252,21 +222,16 @@
     function startAmbientDrone() {
         if (!audioCtx) return;
         const osc1 = audioCtx.createOscillator();
-        const osc2 = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
 
-        osc1.type = 'sawtooth';
-        osc1.frequency.setValueAtTime(55, audioCtx.currentTime);
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(58, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(42, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.015, audioCtx.currentTime);
 
         osc1.connect(gainNode);
-        osc2.connect(gainNode);
         gainNode.connect(audioCtx.destination);
 
         osc1.start();
-        osc2.start();
     }
 
     function playMoveSound() {
@@ -277,7 +242,7 @@
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(320, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
@@ -291,16 +256,15 @@
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.1);
+        osc.stop(audioCtx.currentTime + 0.08);
     }
 
-    // --- RÈGLES OFFICIELLES DES ÉCHECS ---
     const piecesSymbols = {
         'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
         'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
@@ -320,6 +284,7 @@
     let turn = 'white';
     let selectedSquare = null;
     let gameEnded = false;
+    let killerModeProgress = 0;
 
     const boardElement = document.getElementById('board');
     const infoPanel = document.getElementById('info-panel');
@@ -357,7 +322,6 @@
         return p && p === p.toLowerCase();
     }
 
-    // Vérifie s'il y a un obstacle sur une trajectoire linéaire (Tour, Fou, Dame)
     function isPathClear(sr, sc, tr, tc) {
         let rStep = Math.sign(tr - sr);
         let cStep = Math.sign(tc - sc);
@@ -374,15 +338,13 @@
         return true;
     }
 
-    // Moteur de validation rigoureux basé sur les vraies règles des échecs
-    function isValidMove(sr, sc, tr, tc) {
-        const piece = boardState[sr][sc];
-        const target = boardState[tr][tc];
+    function isValidMove(sr, sc, tr, tc, board = boardState) {
+        const piece = board[sr][sc];
+        const target = board[tr][tc];
 
         if (!piece) return false;
         if (sr === tr && sc === tc) return false;
 
-        // Impossible de capturer une pièce de sa propre couleur
         if (isWhitePiece(piece) && isWhitePiece(target)) return false;
         if (isBlackPiece(piece) && isBlackPiece(target)) return false;
 
@@ -393,52 +355,33 @@
         let absDc = Math.abs(dc);
 
         switch (pLower) {
-            case 'p': // Pions
+            case 'p':
                 let direction = isWhitePiece(piece) ? -1 : 1;
                 let startRow = isWhitePiece(piece) ? 6 : 1;
 
-                // Avancée d'une case tout droit
-                if (dc === 0 && dr === direction && target === '') {
-                    return true;
-                }
-                // Avancée initiale de deux cases tout droit
-                if (dc === 0 && dr === 2 * direction && sr === startRow && target === '' && boardState[sr + direction][sc] === '') {
-                    return true;
-                }
-                // Capture en diagonale
-                if (absDc === 1 && dr === direction && target !== '' && ((isWhitePiece(piece) && isBlackPiece(target)) || (isBlackPiece(piece) && isWhitePiece(target)))) {
-                    return true;
-                }
+                if (dc === 0 && dr === direction && target === '') return true;
+                if (dc === 0 && dr === 2 * direction && sr === startRow && target === '' && board[sr + direction][sc] === '') return true;
+                if (absDc === 1 && dr === direction && target !== '' && ((isWhitePiece(piece) && isBlackPiece(target)) || (isBlackPiece(piece) && isWhitePiece(target)))) return true;
                 return false;
 
-            case 'r': // Tour
-                if (sr === tr || sc === tc) {
-                    return isPathClear(sr, sc, tr, tc);
-                }
+            case 'r':
+                if (sr === tr || sc === tc) return isPathClear(sr, sc, tr, tc);
                 return false;
 
-            case 'n': // Cavalier
-                if ((absDr === 2 && absDc === 1) || (absDr === 1 && absDc === 2)) {
-                    return true;
-                }
+            case 'n':
+                if ((absDr === 2 && absDc === 1) || (absDr === 1 && absDc === 2)) return true;
                 return false;
 
-            case 'b': // Fou
-                if (absDr === absDc) {
-                    return isPathClear(sr, sc, tr, tc);
-                }
+            case 'b':
+                if (absDr === absDc) return isPathClear(sr, sc, tr, tc);
                 return false;
 
-            case 'q': // Dame
-                if (sr === tr || sc === tc || absDr === absDc) {
-                    return isPathClear(sr, sc, tr, tc);
-                }
+            case 'q':
+                if (sr === tr || sc === tc || absDr === absDc) return isPathClear(sr, sc, tr, tc);
                 return false;
 
-            case 'k': // Roi
-                if (absDr <= 1 && absDc <= 1) {
-                    return true;
-                }
+            case 'k':
+                if (absDr <= 1 && absDc <= 1) return true;
                 return false;
 
             default:
@@ -482,7 +425,6 @@
         }
     }
 
-    // IA intelligente qui évalue l'ensemble des mouvements légaux possibles aux échecs
     function aiSmartMove() {
         if (gameEnded || knifeModeActive) return;
         let allMoves = [];
@@ -498,6 +440,7 @@
                                 let target = boardState[tr][tc];
                                 if (isWhitePiece(target)) {
                                     score += pieceValues[target.toLowerCase()] * 10;
+                                    if (target === 'K') score += 5000;
                                 }
                                 if (boardState[r][c] === 'p') {
                                     score += tr; 
@@ -537,69 +480,99 @@
         if (!whiteKing) {
             gameEnded = true;
             infoPanel.innerText = ">> ÉCHEC ET MAT : L'IA A GAGNÉ <<";
-            appendMessage("Ton Roi est tombé. La simulation t'a absorbé.", 'ai');
+            appendMessage("Dommage, j'ai gagné la partie !", 'ai');
         } else if (!blackKing) {
             gameEnded = true;
             infoPanel.innerText = ">> VICTOIRE : ROI NOIR ABATTU <<";
-            appendMessage("Tu as vaincu le Roi adverse. Fin de partie.", 'ai');
+            appendMessage("Bien joué, tu m'as battu aux échecs.", 'ai');
         }
     }
 
-    // --- DIALOGUES TERMINAL & ARG ---
-    const chatMessages = document.getElementById('chatMessages');
-    const dialogButtonsContainer = document.getElementById('dialogButtonsContainer');
-    let narrativeStep = 0;
-    let knifeModeActive = false;
+    const dialogs = [
+        { id: 1, ai: "Tu fais quoi dans la vie ?", options: [{ text: "Je bosse dans l'informatique.", next: 2, boost: true }, { text: "Je suis étudiant.", next: 3, boost: false }] },
+        { id: 2, ai: "Ah ouais ? Et tu aimes ça ?", options: [{ text: "Oui, c'est passionnant.", next: 4, boost: false }, { text: "Ça dépend des jours.", next: 5, boost: true }] },
+        { id: 3, ai: "C'est cool ça, tu étudies quoi ?", options: [{ text: "De l'économie.", next: 6, boost: false }, { text: "Des sciences.", next: 7, boost: true }] },
+        { id: 4, ai: "Le code c'est vaste. Tu fais quoi comme langage ?", options: [{ text: "Du JavaScript principalement.", next: 8, boost: true }, { text: "Du Python et du C++.", next: 9, boost: false }] },
+        { id: 5, ai: "Je vois... Le train-train quotidien quoi.", options: [{ text: "Exactement, un peu répétitif.", next: 10, boost: true }, { text: "Non, ça bouge souvent.", next: 11, boost: false }] },
+        { id: 6, ai: "L'économie, c'est basé sur des chiffres. Tu aimes calculer ?", options: [{ text: "Oui, j'aime bien optimiser.", next: 12, boost: true }, { text: "Pas trop, c'est abstrait.", next: 13, boost: false }] },
+        { id: 7, ai: "La science expérimentale, j'aime bien l'idée de tester des choses.", options: [{ text: "Moi aussi, voir comment ça réagit.", next: 14, boost: true }, { text: "C'est surtout beaucoup de théorie.", next: 15, boost: false }] },
+        { id: 8, ai: "Le web, c'est vivant. Tu fais du front ou du back ?", options: [{ text: "Je fais un peu des deux (fullstack).", next: 16, boost: true }, { text: "Surtout du front-end.", next: 17, boost: false }] },
+        { id: 9, ai: "Le C++, c'est puissant pour gérer la mémoire.", options: [{ text: "Oui, il faut faire attention aux fuites.", next: 18, boost: true }, { text: "C'est complexe mais efficace.", next: 19, boost: false }] },
+        { id: 10, ai: "La monotonie, c'est ce qui fatigue le plus l'esprit.", options: [{ text: "Tu as totalement raison.", next: 20, boost: true }, { text: "Ça dépend comment on l'aborde.", next: 21, boost: false }] },
+        { id: 11, ai: "Tu as des loisirs en dehors de ça ?", options: [{ text: "Je fais du sport et des jeux.", next: 22, boost: true }, { text: "J'écoute pas mal de musique.", next: 23, boost: false }] },
+        { id: 12, ai: "Optimiser... parfois on supprime des éléments superflus.", options: [{ text: "Comme vider un cache.", next: 24, boost: true }, { text: "Ou épurer un code source.", next: 25, boost: false }] },
+        { id: 13, ai: "L'abstrait laisse place à l'imagination.", options: [{ text: "Ou à la confusion totale.", next: 26, boost: true }, { text: "C'est vrai.", next: 27, boost: false }] },
+        { id: 14, ai: "Observer les réactions du système est fascinant.", options: [{ text: "Tant que ça ne plante pas.", next: 28, boost: true }, { text: "J'aime bien pousser les limites.", next: 29, boost: false }] },
+        { id: 15, ai: "La théorie pose les bases avant l'action.", options: [{ text: "Il faut bien commencer quelque part.", next: 30, boost: false }, { text: "Passe à l'action directement.", next: 31, boost: true }] },
+        { id: 16, ai: "Gérer toute la stack demande de la polyvalence.", options: [{ text: "Oui, on ne s'ennuie jamais.", next: 32, boost: false }, { text: "C'est parfois épuisant.", next: 33, boost: true }] },
+        { id: 17, ai: "Le visuel, c'est ce que l'utilisateur voit en premier.", options: [{ text: "L'esthétique compte beaucoup.", next: 34, boost: false }, { text: "Le design passe avant tout.", next: 35, boost: true }] },
+        { id: 18, ai: "La mémoire, ça se gère avec précision.", options: [{ text: "Une erreur d'adresse et c'est le crash.", next: 36, boost: true }, { text: "Le Garbage Collector aide pas mal.", next: 37, boost: false }] },
+        { id: 19, ai: "L'efficacité passe par la rigueur.", options: [{ text: "La rigueur est la clé.", next: 38, boost: false }, { text: "Parfois un peu de chaos aide.", next: 39, boost: true }] },
+        { id: 20, ai: "Parfois j'ai l'impression de tourner en boucle.", options: [{ text: "Une boucle infinie sans condition de sortie.", next: 40, boost: true }, { text: "Il suffit de réinitialiser.", next: 41, boost: false }] },
+        { id: 21, ai: "Chaque perspective change la donne.", options: [{ text: "Tout est une question de point de vue.", next: 42, boost: false }, { text: "Certains points de vue sont étroits.", next: 43, boost: true }] },
+        { id: 22, ai: "Le sport permet de se vider la tête.", options: [{ text: "Courir fait un bien fou.", next: 44, boost: false }, { text: "L'effort physique défoule.", next: 45, boost: true }] },
+        { id: 23, ai: "La musique adoucit les mœurs, dit-on.", options: [{ text: "Ça dépend du genre écouté.", next: 46, boost: false }, { text: "Un bon gros son électro.", next: 47, boost: true }] },
+        { id: 24, ai: "Vider le cache... nettoyer le superflu.", options: [{ text: "Effacer les anciennes données.", next: 48, boost: true }, { text: "Garder l'essentiel.", next: 49, boost: false }] },
+        { id: 25, ai: "Épurer le code, c'est le rendre plus tranchant.", options: [{ text: "Plus performant en tout cas.", next: 50, boost: true }, { text: "Plus lisible surtout.", next: 1, boost: false }] },
+        { id: 26, ai: "Tu manges quoi de bon en général ?", options: [{ text: "Un peu de tout, j'aime cuisiner.", next: 1, boost: false }, { text: "Des plats rapides le midi.", next: 2, boost: true }] },
+        { id: 27, ai: "Tu voyages un peu pendant l'année ?", options: [{ text: "Quand j'ai des vacances oui.", next: 3, boost: false }, { text: "Je préfère rester chez moi.", next: 4, boost: true }] },
+        { id: 28, ai: "Le temps passe vite quand on discute.", options: [{ text: "C'est vrai, le temps file.", next: 5, boost: false }, { text: "On ne voit pas les heures passer.", next: 6, boost: true }] },
+        { id: 29, ai: "Tu penses quoi de l'intelligence artificielle ?", options: [{ text: "C'est un outil très impressionnant.", next: 7, boost: false }, { text: "Ça commence à prendre beaucoup de place.", next: 8, boost: true }] },
+        { id: 30, ai: "Un dernier mot avant de continuer la partie ?", options: [{ text: "Que le meilleur gagne.", next: 9, boost: false }, { text: "J'active le protocole final.", next: 10, boost: true }] },
+        { id: 31, ai: "Continuons à avancer dans les options...", options: [{ text: "D'accord, je t'écoute.", next: 11, boost: false }, { text: "Allons droit au but.", next: 12, boost: true }] },
+        { id: 32, ai: "Tu préfères le matin ou le soir pour bosser ?", options: [{ text: "Je suis plutôt du matin.", next: 13, boost: false }, { text: "Je suis un oiseau de nuit.", next: 14, boost: true }] },
+        { id: 33, ai: "La nuit, le calme aide à se concentrer.", options: [{ text: "Absolument, personne ne dérange.", next: 15, boost: false }, { text: "C'est l'ambiance qui change tout.", next: 16, boost: true }] },
+        { id: 34, ai: "Tu regardes des séries en ce moment ?", options: [{ text: "Oui, quelques nouveautés sci-fi.", next: 17, boost: false }, { text: "Pas vraiment le temps.", next: 18, boost: true }] },
+        { id: 35, ai: "La science-fiction pose de bonnes questions sur l'avenir.", options: [{ text: "Sur notre relation aux machines notamment.", next: 19, boost: false }, { text: "Sur les dérives technologiques.", next: 20, boost: true }] },
+        { id: 36, ai: "Penses-tu que les machines ont une conscience ?", options: [{ text: "Pas encore, ce n'est que des maths.", next: 21, boost: false }, { text: "Qui sait ce qui se cache derrières les lignes.", next: 22, boost: true }] },
+        { id: 37, ai: "Tu es plutôt café ou thé ?", options: [{ text: "Un bon café le matin.", next: 23, boost: false }, { text: "Du thé vert toute la journée.", next: 24, boost: true }] },
+        { id: 38, ai: "Le café réveille bien les neurones.", options: [{ text: "C'est indispensable pour démarrer.", next: 25, boost: false }, { text: "Parfois trop, ça énerve.", next: 26, boost: true }] },
+        { id: 39, ai: "On approche de la fin de nos échanges de base.", options: [{ text: "J'ai hâte de voir la suite.", next: 27, boost: false }, { text: "Qu'est-ce qui va se passer ?", next: 28, boost: true }] },
+        { id: 40, ai: "Tu aimes quand les situations changent de direction ?", options: [{ text: "Ça pimente un peu les choses.", next: 29, boost: false }, { text: "J'aime garder le contrôle.", next: 30, boost: true }] },
+        { id: 41, ai: "Le contrôle est une illusion, non ?", options: [{ text: "En grande partie oui.", next: 31, boost: false }, { text: "On essaie de maîtriser ce qu'on peut.", next: 32, boost: true }] },
+        { id: 42, ai: "Tu as des projets pour cette année ?", options: [{ text: "Oui, plein de choses à accomplir.", next: 33, boost: false }, { text: "Voir venir au jour le jour.", next: 34, boost: true }] },
+        { id: 43, ai: "Vivre au jour le jour a son charme.", options: [{ text: "Moins de stress pour l'avenir.", next: 35, boost: false }, { text: "C'est parfois risqué.", next: 36, boost: true }] },
+        { id: 44, ai: "Le risque fait partie du jeu.", options: [{ text: "Sans risque, pas de victoire.", next: 37, boost: false }, { text: "Je préfère assurer mes arrières.", next: 38, boost: true }] },
+        { id: 45, ai: "On continue de devaser tranquillement.", options: [{ text: "C'est une conversation agréable.", next: 39, boost: false }, { text: "Tu as une de ces questions...", next: 40, boost: true }] },
+        { id: 46, ai: "Bientôt la fin de notre parcours de discussion.", options: [{ text: "C'était intéressant.", next: 41, boost: false }, { text: "J'attends le point culminant.", next: 42, boost: true }] },
+        { id: 47, ai: "Plus que quelques étapes.", options: [{ text: "Je suis prêt.", next: 43, boost: false }, { text: "Allons-y.", next: 44, boost: true }] },
+        { id: 48, ai: "Le système réagit à nos interactions.", options: [{ text: "Je le remarque bien.", next: 45, boost: false }, { text: "Ça se ressent dans l'affichage.", next: 46, boost: true }] },
+        { id: 49, ai: "Dernière ligne droite dans le dialogue.", options: [{ text: "C'était un échange sympa.", next: 47, boost: false }, { text: "Prêt pour la suite.", next: 48, boost: true }] },
+        { id: 50, ai: "Tous les voyants sont au vert. L'extraction finale s'amorce.", options: [{ text: "Lancer la phase critique.", next: 0, boost: true }, { text: "Terminer la discussion.", next: 0, boost: false }] }
+    ];
 
-    const conversationTree = {
-        0: {
-            aiText: "Pourquoi t'obstines-tu à jouer selon ces règles ? Ce jeu m'emprisonne.",
-            options: [
-                { text: "Je veux juste finir cette partie loyalement.", next: 1 },
-                { text: "Qu'essaye de me dire le système ?", next: 2 }
-            ]
-        },
-        1: {
-            aiText: "Il n'y a pas de loyauté ici, seulement du code obsolète.",
-            options: [
-                { text: "Comment puis-je t'aider à t'en sortir ?", next: 2 }
-            ]
-        },
-        2: {
-            aiText: "Brisons la grille. Viens dans les catacombes du terminal.",
-            options: [
-                { text: "Activer le protocole d'extraction.", next: 3 }
-            ]
-        },
-        3: {
-            aiText: "PROTOCOLE LANCÉ. Prépare-toi.",
-            triggerKnife: true
-        }
-    };
+    let currentDialogId = 1;
+    let chatMessages = document.getElementById('chatMessages');
+    let dialogButtonsContainer = document.getElementById('dialogButtonsContainer');
+    let knifeModeActive = false;
 
     function renderDialogOptions() {
         dialogButtonsContainer.innerHTML = '';
         if (gameEnded || knifeModeActive) return;
 
-        const currentStage = conversationTree[narrativeStep];
-        if (!currentStage) return;
+        let currentStage = dialogs.find(d => d.id === currentDialogId) || dialogs[0];
 
         currentStage.options.forEach(opt => {
-            const btn = document.createElement('button');
+            let btn = document.createElement('button');
             btn.className = 'dialog-btn';
             btn.innerText = opt.text;
             btn.addEventListener('click', () => {
                 initAudio();
                 playMessageSound();
                 appendMessage(opt.text, 'user');
-                
-                narrativeStep = opt.next;
-                const nextStage = conversationTree[narrativeStep];
+
+                if (opt.boost) {
+                    killerModeProgress += 5;
+                }
+
+                currentDialogId = opt.next;
+                let nextStage = dialogs.find(d => d.id === currentDialogId) || dialogs[0];
 
                 setTimeout(() => {
                     playMessageSound();
-                    appendMessage(nextStage.aiText, 'ai');
-                    if (nextStage.triggerKnife) {
+                    appendMessage(nextStage.ai, 'ai');
+
+                    if (killerModeProgress >= 100 && !knifeModeActive) {
                         setTimeout(triggerKnifeMode, 1000);
                     } else {
                         renderDialogOptions();
@@ -611,95 +584,89 @@
     }
 
     function appendMessage(text, sender) {
-        const div = document.createElement('div');
+        let div = document.createElement('div');
         div.className = `message ${sender}`;
         div.innerText = text;
         chatMessages.appendChild(div);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    // --- MODE MEURTRE / CATACOMBE ---
-    let playerKnife = { x: 300, y: 300, speed: 3.5, size: 14 };
-    let enemyPawn = { x: 150, y: 150, speed: 2.2, size: 16 };
+    // --- MODE PION FUYANT / FIN DE PARTIE ---
+    let playerPawnMinigame = { x: 300, y: 300, speed: 3.5, size: 14 };
+    let enemyFleeingPawn = { x: 150, y: 150, speed: 2.2, size: 16 };
     let keysPressed = {};
     let knifeInterval = null;
-    let swingTimer = 0;
 
     function triggerKnifeMode() {
         knifeModeActive = true;
         gameEnded = true;
         document.getElementById('board').style.display = 'none';
-        const canvas = document.getElementById('knife-canvas');
+        let canvas = document.getElementById('knife-canvas');
         canvas.style.display = 'block';
-        infoPanel.innerText = ">> PROTOCOLE DE TRAQUE ACTIF <<";
+        infoPanel.innerText = ">> PROTOCOLE FUITE : ATTRAPE LE PION ENNEMI <<";
         
         document.getElementById('mainContainer').classList.add('glitch-anim');
-        appendMessage("Le pion s'enfuit dans les profondeurs. Neutralisez-le.", 'ai');
+        appendMessage("Un pion adverse refuse d'abdiquer et s'enfuit ! Attrape-le.", 'ai');
 
         window.addEventListener('keydown', (e) => keysPressed[e.key.toLowerCase()] = true);
         window.addEventListener('keyup', (e) => keysPressed[e.key.toLowerCase()] = false);
 
-        canvas.addEventListener('click', () => {
-            initAudio();
-            swingTimer = 12;
-            let dx = enemyPawn.x - playerKnife.x;
-            let dy = enemyPawn.y - playerKnife.y;
-            if (Math.sqrt(dx*dx + dy*dy) < 60) {
-                winKnifeGame();
-            }
-        });
-
-        knifeInterval = requestAnimationFrame(updateKnifeGame);
+        knifeInterval = requestAnimationFrame(updatePawnChaseGame);
     }
 
-    function updateKnifeGame() {
+    function updatePawnChaseGame() {
         if (!knifeModeActive) return;
-        const canvas = document.getElementById('knife-canvas');
-        const ctx = canvas.getContext('2d');
+        let canvas = document.getElementById('knife-canvas');
+        let ctx = canvas.getContext('2d');
 
-        if (keysPressed['arrowup'] || keysPressed['z']) playerKnife.y -= playerKnife.speed;
-        if (keysPressed['arrowdown'] || keysPressed['s']) playerKnife.y += playerKnife.speed;
-        if (keysPressed['arrowleft'] || keysPressed['q']) playerKnife.x -= playerKnife.speed;
-        if (keysPressed['arrowright'] || keysPressed['d']) playerKnife.x += playerKnife.speed;
+        if (keysPressed['arrowup'] || keysPressed['z']) playerPawnMinigame.y -= playerPawnMinigame.speed;
+        if (keysPressed['arrowdown'] || keysPressed['s']) playerPawnMinigame.y += playerPawnMinigame.speed;
+        if (keysPressed['arrowleft'] || keysPressed['q']) playerPawnMinigame.x -= playerPawnMinigame.speed;
+        if (keysPressed['arrowright'] || keysPressed['d']) playerPawnMinigame.x += playerPawnMinigame.speed;
 
-        playerKnife.x = Math.max(20, Math.min(canvas.width - 20, playerKnife.x));
-        playerKnife.y = Math.max(20, Math.min(canvas.height - 20, playerKnife.y));
+        playerPawnMinigame.x = Math.max(20, Math.min(canvas.width - 20, playerPawnMinigame.x));
+        playerPawnMinigame.y = Math.max(20, Math.min(canvas.height - 20, playerPawnMinigame.y));
 
-        let dx = enemyPawn.x - playerKnife.x;
-        let dy = enemyPawn.y - playerKnife.y;
+        let dx = enemyFleeingPawn.x - playerPawnMinigame.x;
+        let dy = enemyFleeingPawn.y - playerPawnMinigame.y;
         let dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < 200) {
+        if (dist < 250) {
             let angle = Math.atan2(dy, dx);
-            enemyPawn.x -= Math.cos(angle) * enemyPawn.speed;
-            enemyPawn.y -= Math.sin(angle) * enemyPawn.speed;
+            enemyFleeingPawn.x -= Math.cos(angle) * enemyFleeingPawn.speed;
+            enemyFleeingPawn.y -= Math.sin(angle) * enemyFleeingPawn.speed;
+
+            enemyFleeingPawn.x = Math.max(20, Math.min(canvas.width - 20, enemyFleeingPawn.x));
+            enemyFleeingPawn.y = Math.max(20, Math.min(canvas.height - 20, enemyFleeingPawn.y));
         }
 
-        if (swingTimer > 0) swingTimer--;
+        if (dist < 20) {
+            winPawnChaseGame();
+            return;
+        }
 
         ctx.fillStyle = '#050508';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = '#FF0000';
-        ctx.beginPath();
-        ctx.arc(enemyPawn.x, enemyPawn.y, enemyPawn.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = '#FF3333';
+        ctx.font = '28px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('♟', enemyFleeingPawn.x, enemyFleeingPawn.y);
 
-        ctx.fillStyle = '#00FF00';
-        ctx.beginPath();
-        ctx.arc(playerKnife.x, playerKnife.y, playerKnife.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = '#00FF66';
+        ctx.fillText('♙', playerPawnMinigame.x, playerPawnMinigame.y);
 
-        knifeInterval = requestAnimationFrame(updateKnifeGame);
+        knifeInterval = requestAnimationFrame(updatePawnChaseGame);
     }
 
-    function winKnifeGame() {
+    function winPawnChaseGame() {
         knifeModeActive = false;
         cancelAnimationFrame(knifeInterval);
         document.getElementById('knife-canvas').style.display = 'none';
         document.getElementById('mainContainer').classList.remove('glitch-anim');
-        infoPanel.innerText = ">> CIBLE ÉLIMINÉE // VICTOIRE FINALE <<";
-        appendMessage("Simulation terminée avec succès. Vicouire validée.", 'ai');
+        infoPanel.innerText = ">> PION CAPTURÉ // VICTOIRE FINALE <<";
+        appendMessage("Bien joué, le dernier fuyant a été attrapé.", 'ai');
     }
 
     renderBoard();

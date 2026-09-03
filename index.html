@@ -300,7 +300,7 @@
         osc.stop(audioCtx.currentTime + 0.1);
     }
 
-    // --- ÉCHECS CORRIGÉS & IA STRATÉGIQUE ---
+    // --- RÈGLES OFFICIELLES DES ÉCHECS ---
     const piecesSymbols = {
         'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
         'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
@@ -357,16 +357,93 @@
         return p && p === p.toLowerCase();
     }
 
-    // Validation simplifiée mais robuste pour permettre de jouer une vraie partie
+    // Vérifie s'il y a un obstacle sur une trajectoire linéaire (Tour, Fou, Dame)
+    function isPathClear(sr, sc, tr, tc) {
+        let rStep = Math.sign(tr - sr);
+        let cStep = Math.sign(tc - sc);
+        let currR = sr + rStep;
+        let currC = sc + cStep;
+
+        while (currR !== tr || currC !== tc) {
+            if (boardState[currR][currC] !== '') {
+                return false;
+            }
+            currR += rStep;
+            currC += cStep;
+        }
+        return true;
+    }
+
+    // Moteur de validation rigoureux basé sur les vraies règles des échecs
     function isValidMove(sr, sc, tr, tc) {
         const piece = boardState[sr][sc];
         const target = boardState[tr][tc];
+
         if (!piece) return false;
         if (sr === tr && sc === tc) return false;
-        // On ne peut pas capturer ses propres pièces
+
+        // Impossible de capturer une pièce de sa propre couleur
         if (isWhitePiece(piece) && isWhitePiece(target)) return false;
         if (isBlackPiece(piece) && isBlackPiece(target)) return false;
-        return true;
+
+        const pLower = piece.toLowerCase();
+        let dr = tr - sr;
+        let dc = tc - sc;
+        let absDr = Math.abs(dr);
+        let absDc = Math.abs(dc);
+
+        switch (pLower) {
+            case 'p': // Pions
+                let direction = isWhitePiece(piece) ? -1 : 1;
+                let startRow = isWhitePiece(piece) ? 6 : 1;
+
+                // Avancée d'une case tout droit
+                if (dc === 0 && dr === direction && target === '') {
+                    return true;
+                }
+                // Avancée initiale de deux cases tout droit
+                if (dc === 0 && dr === 2 * direction && sr === startRow && target === '' && boardState[sr + direction][sc] === '') {
+                    return true;
+                }
+                // Capture en diagonale
+                if (absDc === 1 && dr === direction && target !== '' && ((isWhitePiece(piece) && isBlackPiece(target)) || (isBlackPiece(piece) && isWhitePiece(target)))) {
+                    return true;
+                }
+                return false;
+
+            case 'r': // Tour
+                if (sr === tr || sc === tc) {
+                    return isPathClear(sr, sc, tr, tc);
+                }
+                return false;
+
+            case 'n': // Cavalier
+                if ((absDr === 2 && absDc === 1) || (absDr === 1 && absDc === 2)) {
+                    return true;
+                }
+                return false;
+
+            case 'b': // Fou
+                if (absDr === absDc) {
+                    return isPathClear(sr, sc, tr, tc);
+                }
+                return false;
+
+            case 'q': // Dame
+                if (sr === tr || sc === tc || absDr === absDc) {
+                    return isPathClear(sr, sc, tr, tc);
+                }
+                return false;
+
+            case 'k': // Roi
+                if (absDr <= 1 && absDc <= 1) {
+                    return true;
+                }
+                return false;
+
+            default:
+                return false;
+        }
     }
 
     function handleSquareClick(r, c) {
@@ -405,7 +482,7 @@
         }
     }
 
-    // IA Améliorée : privilégie les captures et les coups intelligents au lieu de jouer totalement au hasard
+    // IA intelligente qui évalue l'ensemble des mouvements légaux possibles aux échecs
     function aiSmartMove() {
         if (gameEnded || knifeModeActive) return;
         let allMoves = [];
@@ -419,11 +496,9 @@
                             if (isValidMove(r, c, tr, tc)) {
                                 let score = 0;
                                 let target = boardState[tr][tc];
-                                // Priorité de capture basée sur la valeur
                                 if (isWhitePiece(target)) {
                                     score += pieceValues[target.toLowerCase()] * 10;
                                 }
-                                // Bonus pour avancer les pions vers l'avant
                                 if (boardState[r][c] === 'p') {
                                     score += tr; 
                                 }
@@ -465,7 +540,7 @@
             appendMessage("Ton Roi est tombé. La simulation t'a absorbé.", 'ai');
         } else if (!blackKing) {
             gameEnded = true;
-            infoPanel.innerText = ">> VICTOIRE : ROI NOIR ABattu <<";
+            infoPanel.innerText = ">> VICTOIRE : ROI NOIR ABATTU <<";
             appendMessage("Tu as vaincu le Roi adverse. Fin de partie.", 'ai');
         }
     }
@@ -497,7 +572,7 @@
             ]
         },
         3: {
-            aiText: " PROTOCOLE LANCÉ. Prépare-toi.",
+            aiText: "PROTOCOLE LANCÉ. Prépare-toi.",
             triggerKnife: true
         }
     };
@@ -548,7 +623,6 @@
     let enemyPawn = { x: 150, y: 150, speed: 2.2, size: 16 };
     let keysPressed = {};
     let knifeInterval = null;
-    let bloodSplatters = [];
     let swingTimer = 0;
 
     function triggerKnifeMode() {

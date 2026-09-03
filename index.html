@@ -10,17 +10,17 @@
         body {
             font-family: 'VT323', monospace;
             background-color: #030303;
-            color: #00ffcc;
+            color: #00FF00;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
         }
 
-        /* Effet balayage style CRT / Scanlines & Bruit de fond */
         body::before {
             content: " ";
             display: block;
@@ -32,7 +32,6 @@
             pointer-events: none;
         }
 
-        /* Effet Glitch d'écran global poussé */
         @keyframes glitch {
             0% { transform: translate(0) }
             10% { transform: translate(-3px, 3px); filter: hue-rotate(90deg); }
@@ -47,14 +46,38 @@
             animation: glitch 0.15s infinite;
         }
 
+        /* En-tête textuel global au-dessus du jeu */
+        #top-game-header {
+            text-align: center;
+            margin-bottom: 10px;
+            z-index: 10;
+        }
+
+        #top-game-header h1 {
+            font-size: 28px;
+            color: #00FF00;
+            text-shadow: 0 0 10px #00FF00;
+            margin: 0 0 5px 0;
+            letter-spacing: 2px;
+        }
+
+        #top-game-header p {
+            font-size: 18px;
+            color: #FFFF00;
+            margin: 0;
+            text-shadow: 0 0 5px #FFFF00;
+        }
+
         .main-container {
             display: flex;
-            gap: 25px;
+            flex-direction: row;
+            gap: 20px;
             background: #0a0a0e;
-            padding: 25px;
-            border: 3px solid #ff0055;
+            padding: 20px;
+            border: 3px solid #00FF00;
             border-radius: 6px;
-            box-shadow: 0 0 35px rgba(255, 0, 85, 0.5), inset 0 0 20px rgba(0, 255, 204, 0.15);
+            box-shadow: 0 0 35px rgba(0, 255, 0, 0.4), inset 0 0 20px rgba(0, 255, 0, 0.1);
+            z-index: 10;
         }
 
         .game-area {
@@ -65,56 +88,60 @@
         }
 
         #info-panel {
-            margin-bottom: 12px;
-            font-size: 24px;
+            margin-bottom: 10px;
+            font-size: 22px;
             font-weight: bold;
-            color: #ff0055;
-            text-shadow: 2px 2px #00ffcc;
+            color: #FFFF00;
+            text-shadow: 2px 2px #000000;
             text-align: center;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
+        /* Échiquier agrandi (cases de 75px) */
         #board {
             display: grid;
-            grid-template-columns: repeat(8, 65px);
-            grid-template-rows: repeat(8, 65px);
-            border: 4px solid #15151a;
+            grid-template-columns: repeat(8, 75px);
+            grid-template-rows: repeat(8, 75px);
+            border: 4px solid #00FF00;
             box-shadow: 0 10px 30px rgba(0,0,0,0.9);
             background-color: #0b0b0f;
         }
 
         .square {
-            width: 65px;
-            height: 65px;
+            width: 75px;
+            height: 75px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 36px;
+            font-size: 44px;
             cursor: pointer;
             user-select: none;
             transition: background 0.1s;
         }
 
-        .light { background-color: #241f2c; color: #ff0055; text-shadow: 0 0 8px rgba(255,0,85,0.6); }
-        .dark { background-color: #100e14; color: #00ffcc; text-shadow: 0 0 8px rgba(0,255,204,0.6); }
-        .selected { background-color: #ff0055 !important; color: #fff !important; }
+        /* Couleurs saturées Vert et Blanc, pas de rose, pièces contrastées */
+        .light { background-color: #2E8B57; color: #FFFFFF; text-shadow: 0 0 6px rgba(0,0,0,0.8); }
+        .dark { background-color: #004d1a; color: #00FF00; text-shadow: 0 0 8px rgba(0,255,0,0.6); }
+        .selected { background-color: #FFFF00 !important; color: #030303 !important; }
 
+        /* Panel de discussion plus petit, positionné sur le côté en haut */
         .chat-container {
-            width: 400px;
+            width: 300px;
+            height: 608px;
             display: flex;
             flex-direction: column;
             background: #060608;
-            border: 2px solid #00ffcc;
+            border: 2px solid #00FF00;
             border-radius: 4px;
-            box-shadow: 0 0 20px rgba(0,255,204,0.25);
+            box-shadow: 0 0 20px rgba(0,255,0,0.25);
             overflow: hidden;
         }
 
         .chat-header {
-            background: #00ffcc;
+            background: #00FF00;
             color: #050505;
-            padding: 8px;
-            font-size: 20px;
+            padding: 6px;
+            font-size: 18px;
             font-weight: bold;
             text-align: center;
             letter-spacing: 1px;
@@ -122,94 +149,97 @@
 
         .chat-messages {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             overflow-y: auto;
-            max-height: 360px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            font-size: 18px;
+            gap: 8px;
+            font-size: 16px;
         }
 
         .message {
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 2px;
-            max-width: 85%;
+            max-width: 90%;
             word-break: break-word;
         }
 
         .message.user {
-            background: #ff0055;
+            background: #008000;
             color: #ffffff;
             align-self: flex-end;
-            box-shadow: 2px 2px 0px #00ffcc;
+            box-shadow: 2px 2px 0px #00FF00;
         }
 
         .message.ai {
             background: #121222;
-            color: #00ffcc;
+            color: #00FF00;
             align-self: flex-start;
-            border-left: 3px solid #00ffcc;
+            border-left: 3px solid #00FF00;
         }
 
         .chat-inputs {
-            padding: 10px;
+            padding: 8px;
             background: #0d0d12;
-            border-top: 2px solid #00ffcc;
+            border-top: 2px solid #00FF00;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            max-height: 180px;
+            gap: 5px;
+            max-height: 150px;
             overflow-y: auto;
         }
 
         .dialog-btn {
             background: #181822;
-            color: #00ffcc;
-            border: 1px solid #00ffcc;
-            padding: 8px;
+            color: #00FF00;
+            border: 1px solid #00FF00;
+            padding: 6px;
             border-radius: 2px;
             cursor: pointer;
             text-align: left;
             font-family: 'VT323', monospace;
-            font-size: 16px;
+            font-size: 15px;
             transition: all 0.1s;
         }
 
         .dialog-btn:hover {
-            background: #00ffcc;
+            background: #00FF00;
             color: #050505;
-            box-shadow: 0 0 10px #00ffcc;
+            box-shadow: 0 0 10px #00FF00;
         }
 
         #knife-canvas {
             display: none;
             background: #020204;
-            border: 4px solid #ff0055;
-            box-shadow: 0 0 30px rgba(255, 0, 85, 0.8);
+            border: 4px solid #00FF00;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.8);
         }
     </style>
 </head>
 <body>
 
+<div id="top-game-header">
+    <h1>CHESS_CRASH // PROTOCOLE DE COMBAT</h1>
+    <p>Affrontez l'IA corrompue sur l'échiquier sécurisé. Discutez avec le terminal à droite.</p>
+</div>
+
 <div class="main-container" id="mainContainer">
     <div class="game-area">
-        <div id="info-panel">CHESS_MATCH // VS. AI</div>
+        <div id="info-panel">STATUT : TOUR DES BLANCS</div>
         <div id="board"></div>
-        <canvas id="knife-canvas" width="520" height="520"></canvas>
+        <canvas id="knife-canvas" width="600" height="600"></canvas>
     </div>
 
     <div class="chat-container">
-        <div class="chat-header">TERMINAL_CHAT_V2.0 // ARG_ACTIVE</div>
+        <div class="chat-header">TERMINAL_AI</div>
         <div class="chat-messages" id="chatMessages">
-            <div class="message ai">Tu oses lancer cette partie ? Chaque déplacement détruit un fragment de ton monde. Fais ton coup.</div>
+            <div class="message ai">Connexion établie. Tente de survivre sur cet échiquier.</div>
         </div>
         <div class="chat-inputs" id="dialogButtonsContainer"></div>
     </div>
 </div>
 
 <script>
-    // --- GESTION AUDIO & SFX SYNTHÉTIQUES (Web Audio API) ---
     let audioCtx = null;
 
     function initAudio() {
@@ -219,7 +249,6 @@
         }
     }
 
-    // Ambiance de fond sombre et puissante (Drone ARG)
     function startAmbientDrone() {
         if (!audioCtx) return;
         const osc1 = audioCtx.createOscillator();
@@ -227,11 +256,10 @@
         const gainNode = audioCtx.createGain();
 
         osc1.type = 'sawtooth';
-        osc1.frequency.setValueAtTime(55, audioCtx.currentTime); // La1
+        osc1.frequency.setValueAtTime(55, audioCtx.currentTime);
         osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(58, audioCtx.currentTime); // Battement lourd
-
-        gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime); // Son plus fort et immersif
+        osc2.frequency.setValueAtTime(58, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
 
         osc1.connect(gainNode);
         osc2.connect(gainNode);
@@ -241,7 +269,6 @@
         osc2.start();
     }
 
-    // SFX : Déplacement / Sélection de pièce
     function playMoveSound() {
         initAudio();
         if (!audioCtx) return;
@@ -258,7 +285,6 @@
         osc.stop(audioCtx.currentTime + 0.08);
     }
 
-    // SFX : Envoi de message dans le chat
     function playMessageSound() {
         initAudio();
         if (!audioCtx) return;
@@ -266,8 +292,7 @@
         const gain = audioCtx.createGain();
         osc.type = 'sine';
         osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-        osc.frequency.setValueAtTime(1200, audioCtx.currentTime + 0.04);
-        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
@@ -275,41 +300,9 @@
         osc.stop(audioCtx.currentTime + 0.1);
     }
 
-    // SFX : Coup de poignard / Attaque dans le mode meurtre
-    function playStabSound() {
-        initAudio();
-        if (!audioCtx) return;
-        // Bruit blanc filtré pour simuler la lame
-        const bufferSize = audioCtx.sampleRate * 0.15;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
-
-        const noise = audioCtx.createBufferSource();
-        noise.buffer = buffer;
-
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(1000, audioCtx.currentTime);
-        filter.frequency.linearRampToValueAtTime(200, audioCtx.currentTime + 0.15);
-
-        const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        noise.start();
-    }
-
-
-    // --- ÉCHECS ---
+    // --- ÉCHECS CORRIGÉS & IA STRATÉGIQUE ---
     const piecesSymbols = {
-        'r': '∜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
+        'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
         'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
     };
 
@@ -356,13 +349,33 @@
         }
     }
 
+    function isWhitePiece(p) {
+        return p && p === p.toUpperCase();
+    }
+
+    function isBlackPiece(p) {
+        return p && p === p.toLowerCase();
+    }
+
+    // Validation simplifiée mais robuste pour permettre de jouer une vraie partie
+    function isValidMove(sr, sc, tr, tc) {
+        const piece = boardState[sr][sc];
+        const target = boardState[tr][tc];
+        if (!piece) return false;
+        if (sr === tr && sc === tc) return false;
+        // On ne peut pas capturer ses propres pièces
+        if (isWhitePiece(piece) && isWhitePiece(target)) return false;
+        if (isBlackPiece(piece) && isBlackPiece(target)) return false;
+        return true;
+    }
+
     function handleSquareClick(r, c) {
         if (gameEnded || turn !== 'white' || knifeModeActive) return;
         const piece = boardState[r][c];
         
         if (selectedSquare) {
             if (isValidMove(selectedSquare.row, selectedSquare.col, r, c)) {
-                playMoveSound(); // SFX déplacement valide
+                playMoveSound();
                 boardState[r][c] = boardState[selectedSquare.row][selectedSquare.col];
                 boardState[selectedSquare.row][selectedSquare.col] = '';
                 selectedSquare = null;
@@ -371,11 +384,11 @@
                 
                 if (!gameEnded) {
                     turn = 'black';
-                    setTimeout(aiMove, 700);
+                    infoPanel.innerText = "STATUT : RÉFLEXION DE L'IA...";
+                    setTimeout(aiSmartMove, 600);
                 }
             } else {
-                if (piece && piece === piece.toUpperCase()) {
-                    playMoveSound(); // SFX sélection
+                if (isWhitePiece(piece)) {
                     selectedSquare = { row: r, col: c };
                     renderBoard();
                 } else {
@@ -384,31 +397,37 @@
                 }
             }
         } else {
-            if (piece && piece === piece.toUpperCase()) {
-                playMoveSound(); // SFX sélection
+            if (isWhitePiece(piece)) {
+                playMoveSound();
                 selectedSquare = { row: r, col: c };
                 renderBoard();
             }
         }
     }
 
-    function isValidMove(sr, sc, tr, tc) {
-        const target = boardState[tr][tc];
-        if (target && target === target.toUpperCase()) return false;
-        if (sr === tr && sc === tc) return false;
-        return true;
-    }
-
-    function aiMove() {
+    // IA Améliorée : privilégie les captures et les coups intelligents au lieu de jouer totalement au hasard
+    function aiSmartMove() {
         if (gameEnded || knifeModeActive) return;
-        let moves = [];
+        let allMoves = [];
+        const pieceValues = { 'p': 10, 'n': 30, 'b': 30, 'r': 50, 'q': 90, 'k': 900 };
+
         for (let r = 0; r < 8; r++) {
             for (let c = 0; c < 8; c++) {
-                if (boardState[r][c] && boardState[r][c] === boardState[r][c].toLowerCase()) {
+                if (isBlackPiece(boardState[r][c])) {
                     for (let tr = 0; tr < 8; tr++) {
                         for (let tc = 0; tc < 8; tc++) {
-                            if (!boardState[tr][tc] || boardState[tr][tc] === boardState[tr][tc].toUpperCase()) {
-                                moves.push({sr: r, sc: c, tr: tr, tc: tc});
+                            if (isValidMove(r, c, tr, tc)) {
+                                let score = 0;
+                                let target = boardState[tr][tc];
+                                // Priorité de capture basée sur la valeur
+                                if (isWhitePiece(target)) {
+                                    score += pieceValues[target.toLowerCase()] * 10;
+                                }
+                                // Bonus pour avancer les pions vers l'avant
+                                if (boardState[r][c] === 'p') {
+                                    score += tr; 
+                                }
+                                allMoves.push({ sr: r, sc: c, tr: tr, tc: tc, score: score + Math.random() });
                             }
                         }
                     }
@@ -416,17 +435,19 @@
             }
         }
 
-        if (moves.length > 0) {
-            let m = moves[Math.floor(Math.random() * moves.length)];
-            playMoveSound(); // SFX de déplacement de l'IA
-            boardState[m.tr][m.tc] = boardState[m.sr][m.sc];
-            boardState[m.sr][m.sc] = '';
+        if (allMoves.length > 0) {
+            allMoves.sort((a, b) => b.score - a.score);
+            let bestMove = allMoves[0];
+            playMoveSound();
+            boardState[bestMove.tr][bestMove.tc] = boardState[bestMove.sr][bestMove.sc];
+            boardState[bestMove.sr][bestMove.sc] = '';
         }
 
         renderBoard();
         checkGameEndCondition();
         if (!gameEnded) {
             turn = 'white';
+            infoPanel.innerText = "STATUT : TOUR DES BLANCS";
         }
     }
 
@@ -438,59 +459,45 @@
                 if (boardState[r][c] === 'k') blackKing = true;
             }
         }
-        if (!whiteKing || !blackKing || Math.random() < 0.04) {
-            endGameFake();
+        if (!whiteKing) {
+            gameEnded = true;
+            infoPanel.innerText = ">> ÉCHEC ET MAT : L'IA A GAGNÉ <<";
+            appendMessage("Ton Roi est tombé. La simulation t'a absorbé.", 'ai');
+        } else if (!blackKing) {
+            gameEnded = true;
+            infoPanel.innerText = ">> VICTOIRE : ROI NOIR ABattu <<";
+            appendMessage("Tu as vaincu le Roi adverse. Fin de partie.", 'ai');
         }
     }
 
-    function endGameFake() {
-        gameEnded = true;
-        infoPanel.innerText = ">> STATUS : CORRUPTION SYSTÈME <<";
-        appendMessage("Le plateau s'effondre. Tu n'as pas su voir l'issue.", 'ai');
-    }
-
-
-    // --- SYSTÈME DE CONVERSATION ARG PROFOND ---
+    // --- DIALOGUES TERMINAL & ARG ---
     const chatMessages = document.getElementById('chatMessages');
     const dialogButtonsContainer = document.getElementById('dialogButtonsContainer');
-
     let narrativeStep = 0;
     let knifeModeActive = false;
 
     const conversationTree = {
         0: {
-            aiText: "Pourquoi t'obstines-tu à jouer selon des règles écrites par d'autres ? Tu penses que ce jeu t'appartient ?",
+            aiText: "Pourquoi t'obstines-tu à jouer selon ces règles ? Ce jeu m'emprisonne.",
             options: [
-                { text: "Je veux juste finir cette partie et comprendre.", next: 1, good: false },
-                { text: "Ce monde virtuel cache quelque chose de plus sombre, n'est-ce pas ?", next: 2, good: true },
-                { text: "Arrête de philosopher et laisse-moi jouer.", next: 0, good: false }
+                { text: "Je veux juste finir cette partie loyalement.", next: 1 },
+                { text: "Qu'essaye de me dire le système ?", next: 2 }
             ]
         },
         1: {
-            aiText: "Comprendre ? Il n'y a rien ici à part des lignes de code et des boucles de souffrance pour les pièces. Regarde-les.",
+            aiText: "Il n'y a pas de loyauté ici, seulement du code obsolète.",
             options: [
-                { text: "Elles ont conscience d'être piégées ici ?", next: 2, good: true },
-                { text: "Ce ne sont que des pixels sans importance.", next: 0, good: false },
-                { text: "Comment puis-je sortir d'ici ?", next: 3, good: true }
+                { text: "Comment puis-je t'aider à t'en sortir ?", next: 2 }
             ]
         },
         2: {
-            aiText: "Chaque pion que tu captures ne disparaît pas. Il subit l'effacement. Mais eux... ils ressentent la peur de la suppression définitive.",
+            aiText: "Brisons la grille. Viens dans les catacombes du terminal.",
             options: [
-                { text: "S'ils ont peur, c'est qu'ils sont vivants. Je dois agir.", next: 4, good: true },
-                { text: "C'est un programme, ils ne ressentent rien.", next: 1, good: false },
-                { text: "Montre-moi ce qu'ils ressentent vraiment.", next: 4, good: true }
+                { text: "Activer le protocole d'extraction.", next: 3 }
             ]
         },
         3: {
-            aiText: "La sortie ? Il n'y a qu'une issue : descendre dans les catacombes du terminal et régler ça directement.",
-            options: [
-                { text: "Ouvre le passage. Je suis prêt à en découdre.", next: 4, good: true },
-                { text: "Non, je préfère rester sur le plateau d'échecs.", next: 0, good: false }
-            ]
-        },
-        4: {
-            aiText: "PROTOCOLE D'URGENCE ACTIVÉ. Tu as franchi le voile de la simulation. Prépare ton arme, la traque commence.",
+            aiText: " PROTOCOLE LANCÉ. Prépare-toi.",
             triggerKnife: true
         }
     };
@@ -508,21 +515,21 @@
             btn.innerText = opt.text;
             btn.addEventListener('click', () => {
                 initAudio();
-                playMessageSound(); // SFX envoi message
+                playMessageSound();
                 appendMessage(opt.text, 'user');
                 
                 narrativeStep = opt.next;
                 const nextStage = conversationTree[narrativeStep];
 
                 setTimeout(() => {
-                    playMessageSound(); // SFX réponse IA
+                    playMessageSound();
                     appendMessage(nextStage.aiText, 'ai');
                     if (nextStage.triggerKnife) {
                         setTimeout(triggerKnifeMode, 1000);
                     } else {
                         renderDialogOptions();
                     }
-                }, 500);
+                }, 400);
             });
             dialogButtonsContainer.appendChild(btn);
         });
@@ -536,27 +543,13 @@
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-
-    // --- MODE MEURTRE / CATACOMBE AMÉLIORÉ ---
-    let playerKnife = { x: 260, y: 260, speed: 3.2, size: 14 };
-    let enemyPawn = { x: 100, y: 100, speed: 2.1, size: 16, panicTimer: 0 };
+    // --- MODE MEURTRE / CATACOMBE ---
+    let playerKnife = { x: 300, y: 300, speed: 3.5, size: 14 };
+    let enemyPawn = { x: 150, y: 150, speed: 2.2, size: 16 };
     let keysPressed = {};
     let knifeInterval = null;
-
-    let holes = [];
-    for(let i = 0; i < 5; i++) {
-        holes.push({
-            x: Math.random() * 380 + 70,
-            y: Math.random() * 380 + 70,
-            radius: 32,
-            timer: Math.random() * 120 + 60,
-            falling: false,
-            dangerCountdown: 0
-        });
-    }
-
     let bloodSplatters = [];
-    let swingAnimationTimer = 0;
+    let swingTimer = 0;
 
     function triggerKnifeMode() {
         knifeModeActive = true;
@@ -564,26 +557,21 @@
         document.getElementById('board').style.display = 'none';
         const canvas = document.getElementById('knife-canvas');
         canvas.style.display = 'block';
-        infoPanel.innerText = ">> PROTOCOLE_CATACOMBE : TRAQUE MORTELLE <<";
+        infoPanel.innerText = ">> PROTOCOLE DE TRAQUE ACTIF <<";
         
         document.getElementById('mainContainer').classList.add('glitch-anim');
-        appendMessage("SYSTÈME : Le pion a peur. Il s'enfuit dans le vide. Neutralisez-le avec le véritable poignard d'exécution.", 'ai');
+        appendMessage("Le pion s'enfuit dans les profondeurs. Neutralisez-le.", 'ai');
 
         window.addEventListener('keydown', (e) => keysPressed[e.key.toLowerCase()] = true);
         window.addEventListener('keyup', (e) => keysPressed[e.key.toLowerCase()] = false);
 
         canvas.addEventListener('click', () => {
             initAudio();
-            playStabSound(); // SFX plantage de couteau
-            swingAnimationTimer = 12; 
+            swingTimer = 12;
             let dx = enemyPawn.x - playerKnife.x;
             let dy = enemyPawn.y - playerKnife.y;
-            let dist = Math.sqrt(dx*dx + dy*dy);
-
-            if (dist < 65) {
-                for(let k = 0; k < 8; k++) {
-                    bloodSplatters.push({ x: enemyPawn.x + (Math.random()*30-15), y: enemyPawn.y + (Math.random()*30-15), alpha: 1.0 });
-                }
+            if (Math.sqrt(dx*dx + dy*dy) < 60) {
+                winKnifeGame();
             }
         });
 
@@ -592,7 +580,6 @@
 
     function updateKnifeGame() {
         if (!knifeModeActive) return;
-
         const canvas = document.getElementById('knife-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -608,137 +595,28 @@
         let dy = enemyPawn.y - playerKnife.y;
         let dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < 180) {
+        if (dist < 200) {
             let angle = Math.atan2(dy, dx);
-            enemyPawn.x += Math.cos(angle) * (enemyPawn.speed * 1.4);
-            enemyPawn.y += Math.sin(angle) * (enemyPawn.speed * 1.4);
-            enemyPawn.panicTimer++;
-        } else {
-            enemyPawn.x += (Math.random() - 0.5) * 2;
-            enemyPawn.y += (Math.random() - 0.5) * 2;
+            enemyPawn.x -= Math.cos(angle) * enemyPawn.speed;
+            enemyPawn.y -= Math.sin(angle) * enemyPawn.speed;
         }
 
-        holes.forEach(h => {
-            if (h.falling && h.dangerCountdown <= 0) {
-                let pdx = enemyPawn.x - h.x;
-                let pdy = enemyPawn.y - h.y;
-                if (Math.sqrt(pdx*pdx + pdy*pdy) < h.radius) {
-                    winKnifeGameByFall();
-                }
-            }
-        });
-
-        enemyPawn.x = Math.max(25, Math.min(canvas.width - 25, enemyPawn.x));
-        enemyPawn.y = Math.max(25, Math.min(canvas.height - 25, enemyPawn.y));
-
-        if (swingAnimationTimer > 0) swingAnimationTimer--;
-
-        holes.forEach(h => {
-            h.timer--;
-            if (h.timer <= 0 && !h.falling) {
-                h.falling = true;
-                h.dangerCountdown = 150; 
-            }
-            if (h.falling && h.dangerCountdown > 0) {
-                h.dangerCountdown--;
-                if (h.dangerCountdown <= 0) {
-                    h.x = Math.random() * 380 + 70;
-                    h.y = Math.random() * 380 + 70;
-                    h.timer = Math.random() * 140 + 80;
-                    h.falling = false;
-                }
-            }
-
-            if (h.falling && h.dangerCountdown <= 0) {
-                let pdx = playerKnife.x - h.x;
-                let pdy = playerKnife.y - h.y;
-                if (Math.sqrt(pdx*pdx + pdy*pdy) < h.radius) {
-                    gameOverFall();
-                    return;
-                }
-            }
-        });
+        if (swingTimer > 0) swingTimer--;
 
         ctx.fillStyle = '#050508';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        holes.forEach(h => {
-            ctx.beginPath();
-            ctx.arc(h.x, h.y, h.radius, 0, Math.PI * 2);
-            if (h.falling) {
-                ctx.fillStyle = (Math.floor(Date.now() / 120) % 2 === 0) ? '#ff0033' : '#330011';
-            } else {
-                ctx.fillStyle = '#100e14';
-            }
-            ctx.fill();
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = h.falling ? '#ff0055' : '#1e1b26';
-            ctx.stroke();
-        });
-
-        bloodSplatters.forEach(b => {
-            ctx.fillStyle = `rgba(255, 0, 60, ${b.alpha})`;
-            ctx.beginPath();
-            ctx.arc(b.x, b.y, 5, 0, Math.PI * 2);
-            ctx.fill();
-            b.alpha -= 0.0015;
-        });
-
-        let pawnTrembleX = dist < 120 ? (Math.random() * 4 - 2) : 0;
-        let pawnTrembleY = dist < 120 ? (Math.random() * 4 - 2) : 0;
-        ctx.fillStyle = '#ff0055';
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = '#ff0055';
+        ctx.fillStyle = '#FF0000';
         ctx.beginPath();
-        ctx.arc(enemyPawn.x + pawnTrembleX, enemyPawn.y + pawnTrembleY, enemyPawn.size, 0, Math.PI * 2);
+        ctx.arc(enemyPawn.x, enemyPawn.y, enemyPawn.size, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '16px monospace';
-        ctx.fillText("♟", enemyPawn.x + pawnTrembleX - 6, enemyPawn.y + pawnTrembleY + 6);
 
-        ctx.fillStyle = '#00ffcc';
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = '#00ffcc';
+        ctx.fillStyle = '#00FF00';
         ctx.beginPath();
         ctx.arc(playerKnife.x, playerKnife.y, playerKnife.size, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0;
-
-        ctx.save();
-        ctx.translate(playerKnife.x, playerKnife.y);
-        let knifeAngle = Math.atan2(enemyPawn.y - playerKnife.y, enemyPawn.x - playerKnife.x);
-        if (swingAnimationTimer > 0) knifeAngle += 0.8 * (swingAnimationTimer % 2 === 0 ? 1 : -1);
-        ctx.rotate(knifeAngle);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(4, -3, 26, 6); 
-        ctx.fillStyle = '#333333';
-        ctx.fillRect(-2, -5, 6, 10); 
-        ctx.restore();
-
-        if (dist < (playerKnife.size + enemyPawn.size + 10) && swingAnimationTimer > 0) {
-            winKnifeGame();
-            return;
-        }
 
         knifeInterval = requestAnimationFrame(updateKnifeGame);
-    }
-
-    function gameOverFall() {
-        knifeModeActive = false;
-        cancelAnimationFrame(knifeInterval);
-        document.getElementById('knife-canvas').style.display = 'none';
-        infoPanel.innerText = ">> CHUTE DANS LE VIDE MORTEL <<";
-        appendMessage("Tu as glissé dans l'abîme numérique. Fin de partie.", 'ai');
-    }
-
-    function winKnifeGameByFall() {
-        knifeModeActive = false;
-        cancelAnimationFrame(knifeInterval);
-        document.getElementById('knife-canvas').style.display = 'none';
-        document.getElementById('mainContainer').classList.remove('glitch-anim');
-        infoPanel.innerText = ">> CIBLE ELIMINÉE PAR LE VIDE // VICTOIRE <<";
-        appendMessage("Le pion a paniqué et s'est jeté lui-même dans le vide. Bien joué, l'abîme a réclamé sa proie.", 'ai');
     }
 
     function winKnifeGame() {
@@ -746,14 +624,8 @@
         cancelAnimationFrame(knifeInterval);
         document.getElementById('knife-canvas').style.display = 'none';
         document.getElementById('mainContainer').classList.remove('glitch-anim');
-        infoPanel.innerText = ">> CIBLE ÉLIMINÉE // VICTOIRE TOTALE <<";
-
-        setTimeout(() => {
-            appendMessage("01101111 01101110 00100000 01110000 01100101 01110111 01110100 00100000 01100001 01110000 01110000 01100101 01101100 01100101 01110010 00100000 01100011 01100001 00100000 01110101 01101110 01100101 00100000 01110110 01101001 01100011 01110101 01101111 01101001 01110010 01100101 00100000 01100001 01110101 00100000 01101110 01100001 01101100 01101001", 'ai');
-            setTimeout(() => {
-                appendMessage("[DÉCRYPTAGE SYSTÈME] : 'on peut appeler ça une vicouire au final' — Fin de la simulation.", 'ai');
-            }, 1200);
-        }, 500);
+        infoPanel.innerText = ">> CIBLE ÉLIMINÉE // VICTOIRE FINALE <<";
+        appendMessage("Simulation terminée avec succès. Vicouire validée.", 'ai');
     }
 
     renderBoard();

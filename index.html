@@ -100,6 +100,10 @@
         .dark { background-color: #1b4332; color: #111111; text-shadow: 0 0 8px rgba(0,0,0,0.9); }
         .selected { background-color: #FFE600 !important; color: #000000 !important; }
 
+        /* Style spécifique pour dissocier clairement les couleurs des camps */
+        .piece-white { color: #FFFFFF !important; text-shadow: 0 0 8px rgba(255,255,255,0.8); }
+        .piece-green { color: #00FF66 !important; text-shadow: 0 0 10px rgba(0,255,102,0.9); }
+
         .chat-container {
             width: 320px;
             height: 608px;
@@ -203,7 +207,7 @@
     <div class="chat-container">
         <div class="chat-header">TERMINAL</div>
         <div class="chat-messages" id="chatMessages">
-            <div class="message ai">Salut ! Tu passes une bonne journée ?</div>
+            <div class="message ai">Salut ! Tu passes une bonne journée ? (Progression du protocole : 0/50 dialogues)</div>
         </div>
         <div class="chat-inputs" id="dialogButtonsContainer"></div>
     </div>
@@ -214,7 +218,7 @@
 
     function initAudio() {
         if (!audioCtx) {
-            audioCtx =[cite: 7]new (window.AudioContext || window.webkitAudioContext)();
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             startAmbientDrone();
         }
     }
@@ -284,7 +288,8 @@
     let turn = 'white';
     let selectedSquare = null;
     let gameEnded = false;
-    let killerModeProgress = 0;
+    let dialogCount = 0; // Compteur exact de dialogues requis (50)
+    let knifeModeActive = false;
 
     const boardElement = document.getElementById('board');
     const infoPanel = document.getElementById('info-panel');
@@ -298,7 +303,15 @@
                 
                 const piece = boardState[r][c];
                 if (piece) {
-                    sq.innerText = piecesSymbols[piece] || piece;
+                    const span = document.createElement('span');
+                    span.innerText = piecesSymbols[piece] || piece;
+                    // Application stricte des couleurs : Joueur = Blanc, IA = Vert
+                    if (isWhitePiece(piece)) {
+                        span.className = 'piece-white';
+                    } else if (isBlackPiece(piece)) {
+                        span.className = 'piece-green';
+                    }
+                    sq.appendChild(span);
                 }
 
                 if (selectedSquare && selectedSquare.row === r && selectedSquare.col === c) {
@@ -483,68 +496,67 @@
             appendMessage("Dommage, j'ai gagné la partie !", 'ai');
         } else if (!blackKing) {
             gameEnded = true;
-            infoPanel.innerText = ">> VICTOIRE : ROI NOIR ABATTU <<";
+            infoPanel.innerText = ">> VICTOIRE : ROI VERT ABATTU <<";
             appendMessage("Bien joué, tu m'as battu aux échecs.", 'ai');
         }
     }
 
     const dialogs = [
-        { id: 1, ai: "Tu fais quoi dans la vie ?", options: [{ text: "Je bosse dans l'informatique.", next: 2, boost: true }, { text: "Je suis étudiant.", next: 3, boost: false }] },
-        { id: 2, ai: "Ah ouais ? Et tu aimes ça ?", options: [{ text: "Oui, c'est passionnant.", next: 4, boost: false }, { text: "Ça dépend des jours.", next: 5, boost: true }] },
-        { id: 3, ai: "C'est cool ça, tu étudies quoi ?", options: [{ text: "De l'économie.", next: 6, boost: false }, { text: "Des sciences.", next: 7, boost: true }] },
-        { id: 4, ai: "Le code c'est vaste. Tu fais quoi comme langage ?", options: [{ text: "Du JavaScript principalement.", next: 8, boost: true }, { text: "Du Python et du C++.", next: 9, boost: false }] },
-        { id: 5, ai: "Je vois... Le train-train quotidien quoi.", options: [{ text: "Exactement, un peu répétitif.", next: 10, boost: true }, { text: "Non, ça bouge souvent.", next: 11, boost: false }] },
-        { id: 6, ai: "L'économie, c'est basé sur des chiffres. Tu aimes calculer ?", options: [{ text: "Oui, j'aime bien optimiser.", next: 12, boost: true }, { text: "Pas trop, c'est abstrait.", next: 13, boost: false }] },
-        { id: 7, ai: "La science expérimentale, j'aime bien l'idée de tester des choses.", options: [{ text: "Moi aussi, voir comment ça réagit.", next: 14, boost: true }, { text: "C'est surtout beaucoup de théorie.", next: 15, boost: false }] },
-        { id: 8, ai: "Le web, c'est vivant. Tu fais du front ou du back ?", options: [{ text: "Je fais un peu des deux (fullstack).", next: 16, boost: true }, { text: "Surtout du front-end.", next: 17, boost: false }] },
-        { id: 9, ai: "Le C++, c'est puissant pour gérer la mémoire.", options: [{ text: "Oui, il faut faire attention aux fuites.", next: 18, boost: true }, { text: "C'est complexe mais efficace.", next: 19, boost: false }] },
-        { id: 10, ai: "La monotonie, c'est ce qui fatigue le plus l'esprit.", options: [{ text: "Tu as totalement raison.", next: 20, boost: true }, { text: "Ça dépend comment on l'aborde.", next: 21, boost: false }] },
-        { id: 11, ai: "Tu as des loisirs en dehors de ça ?", options: [{ text: "Je fais du sport et des jeux.", next: 22, boost: true }, { text: "J'écoute pas mal de musique.", next: 23, boost: false }] },
-        { id: 12, ai: "Optimiser... parfois on supprime des éléments superflus.", options: [{ text: "Comme vider un cache.", next: 24, boost: true }, { text: "Ou épurer un code source.", next: 25, boost: false }] },
-        { id: 13, ai: "L'abstrait laisse place à l'imagination.", options: [{ text: "Ou à la confusion totale.", next: 26, boost: true }, { text: "C'est vrai.", next: 27, boost: false }] },
-        { id: 14, ai: "Observer les réactions du système est fascinant.", options: [{ text: "Tant que ça ne plante pas.", next: 28, boost: true }, { text: "J'aime bien pousser les limites.", next: 29, boost: false }] },
-        { id: 15, ai: "La théorie pose les bases avant l'action.", options: [{ text: "Il faut bien commencer quelque part.", next: 30, boost: false }, { text: "Passe à l'action directement.", next: 31, boost: true }] },
-        { id: 16, ai: "Gérer toute la stack demande de la polyvalence.", options: [{ text: "Oui, on ne s'ennuie jamais.", next: 32, boost: false }, { text: "C'est parfois épuisant.", next: 33, boost: true }] },
-        { id: 17, ai: "Le visuel, c'est ce que l'utilisateur voit en premier.", options: [{ text: "L'esthétique compte beaucoup.", next: 34, boost: false }, { text: "Le design passe avant tout.", next: 35, boost: true }] },
-        { id: 18, ai: "La mémoire, ça se gère avec précision.", options: [{ text: "Une erreur d'adresse et c'est le crash.", next: 36, boost: true }, { text: "Le Garbage Collector aide pas mal.", next: 37, boost: false }] },
-        { id: 19, ai: "L'efficacité passe par la rigueur.", options: [{ text: "La rigueur est la clé.", next: 38, boost: false }, { text: "Parfois un peu de chaos aide.", next: 39, boost: true }] },
-        { id: 20, ai: "Parfois j'ai l'impression de tourner en boucle.", options: [{ text: "Une boucle infinie sans condition de sortie.", next: 40, boost: true }, { text: "Il suffit de réinitialiser.", next: 41, boost: false }] },
-        { id: 21, ai: "Chaque perspective change la donne.", options: [{ text: "Tout est une question de point de vue.", next: 42, boost: false }, { text: "Certains points de vue sont étroits.", next: 43, boost: true }] },
-        { id: 22, ai: "Le sport permet de se vider la tête.", options: [{ text: "Courir fait un bien fou.", next: 44, boost: false }, { text: "L'effort physique défoule.", next: 45, boost: true }] },
-        { id: 23, ai: "La musique adoucit les mœurs, dit-on.", options: [{ text: "Ça dépend du genre écouté.", next: 46, boost: false }, { text: "Un bon gros son électro.", next: 47, boost: true }] },
-        { id: 24, ai: "Vider le cache... nettoyer le superflu.", options: [{ text: "Effacer les anciennes données.", next: 48, boost: true }, { text: "Garder l'essentiel.", next: 49, boost: false }] },
-        { id: 25, ai: "Épurer le code, c'est le rendre plus tranchant.", options: [{ text: "Plus performant en tout cas.", next: 50, boost: true }, { text: "Plus lisible surtout.", next: 1, boost: false }] },
-        { id: 26, ai: "Tu manges quoi de bon en général ?", options: [{ text: "Un peu de tout, j'aime cuisiner.", next: 1, boost: false }, { text: "Des plats rapides le midi.", next: 2, boost: true }] },
-        { id: 27, ai: "Tu voyages un peu pendant l'année ?", options: [{ text: "Quand j'ai des vacances oui.", next: 3, boost: false }, { text: "Je préfère rester chez moi.", next: 4, boost: true }] },
-        { id: 28, ai: "Le temps passe vite quand on discute.", options: [{ text: "C'est vrai, le temps file.", next: 5, boost: false }, { text: "On ne voit pas les heures passer.", next: 6, boost: true }] },
-        { id: 29, ai: "Tu penses quoi de l'intelligence artificielle ?", options: [{ text: "C'est un outil très impressionnant.", next: 7, boost: false }, { text: "Ça commence à prendre beaucoup de place.", next: 8, boost: true }] },
-        { id: 30, ai: "Un dernier mot avant de continuer la partie ?", options: [{ text: "Que le meilleur gagne.", next: 9, boost: false }, { text: "J'active le protocole final.", next: 10, boost: true }] },
-        { id: 31, ai: "Continuons à avancer dans les options...", options: [{ text: "D'accord, je t'écoute.", next: 11, boost: false }, { text: "Allons droit au but.", next: 12, boost: true }] },
-        { id: 32, ai: "Tu préfères le matin ou le soir pour bosser ?", options: [{ text: "Je suis plutôt du matin.", next: 13, boost: false }, { text: "Je suis un oiseau de nuit.", next: 14, boost: true }] },
-        { id: 33, ai: "La nuit, le calme aide à se concentrer.", options: [{ text: "Absolument, personne ne dérange.", next: 15, boost: false }, { text: "C'est l'ambiance qui change tout.", next: 16, boost: true }] },
-        { id: 34, ai: "Tu regardes des séries en ce moment ?", options: [{ text: "Oui, quelques nouveautés sci-fi.", next: 17, boost: false }, { text: "Pas vraiment le temps.", next: 18, boost: true }] },
-        { id: 35, ai: "La science-fiction pose de bonnes questions sur l'avenir.", options: [{ text: "Sur notre relation aux machines notamment.", next: 19, boost: false }, { text: "Sur les dérives technologiques.", next: 20, boost: true }] },
-        { id: 36, ai: "Penses-tu que les machines ont une conscience ?", options: [{ text: "Pas encore, ce n'est que des maths.", next: 21, boost: false }, { text: "Qui sait ce qui se cache derrières les lignes.", next: 22, boost: true }] },
-        { id: 37, ai: "Tu es plutôt café ou thé ?", options: [{ text: "Un bon café le matin.", next: 23, boost: false }, { text: "Du thé vert toute la journée.", next: 24, boost: true }] },
-        { id: 38, ai: "Le café réveille bien les neurones.", options: [{ text: "C'est indispensable pour démarrer.", next: 25, boost: false }, { text: "Parfois trop, ça énerve.", next: 26, boost: true }] },
-        { id: 39, ai: "On approche de la fin de nos échanges de base.", options: [{ text: "J'ai hâte de voir la suite.", next: 27, boost: false }, { text: "Qu'est-ce qui va se passer ?", next: 28, boost: true }] },
-        { id: 40, ai: "Tu aimes quand les situations changent de direction ?", options: [{ text: "Ça pimente un peu les choses.", next: 29, boost: false }, { text: "J'aime garder le contrôle.", next: 30, boost: true }] },
-        { id: 41, ai: "Le contrôle est une illusion, non ?", options: [{ text: "En grande partie oui.", next: 31, boost: false }, { text: "On essaie de maîtriser ce qu'on peut.", next: 32, boost: true }] },
-        { id: 42, ai: "Tu as des projets pour cette année ?", options: [{ text: "Oui, plein de choses à accomplir.", next: 33, boost: false }, { text: "Voir venir au jour le jour.", next: 34, boost: true }] },
-        { id: 43, ai: "Vivre au jour le jour a son charme.", options: [{ text: "Moins de stress pour l'avenir.", next: 35, boost: false }, { text: "C'est parfois risqué.", next: 36, boost: true }] },
-        { id: 44, ai: "Le risque fait partie du jeu.", options: [{ text: "Sans risque, pas de victoire.", next: 37, boost: false }, { text: "Je préfère assurer mes arrières.", next: 38, boost: true }] },
-        { id: 45, ai: "On continue de devaser tranquillement.", options: [{ text: "C'est une conversation agréable.", next: 39, boost: false }, { text: "Tu as une de ces questions...", next: 40, boost: true }] },
-        { id: 46, ai: "Bientôt la fin de notre parcours de discussion.", options: [{ text: "C'était intéressant.", next: 41, boost: false }, { text: "J'attends le point culminant.", next: 42, boost: true }] },
-        { id: 47, ai: "Plus que quelques étapes.", options: [{ text: "Je suis prêt.", next: 43, boost: false }, { text: "Allons-y.", next: 44, boost: true }] },
-        { id: 48, ai: "Le système réagit à nos interactions.", options: [{ text: "Je le remarque bien.", next: 45, boost: false }, { text: "Ça se ressent dans l'affichage.", next: 46, boost: true }] },
-        { id: 49, ai: "Dernière ligne droite dans le dialogue.", options: [{ text: "C'était un échange sympa.", next: 47, boost: false }, { text: "Prêt pour la suite.", next: 48, boost: true }] },
-        { id: 50, ai: "Tous les voyants sont au vert. L'extraction finale s'amorce.", options: [{ text: "Lancer la phase critique.", next: 0, boost: true }, { text: "Terminer la discussion.", next: 0, boost: false }] }
+        { id: 1, ai: "Tu fais quoi dans la vie ?", options: [{ text: "Je bosse dans l'informatique.", next: 2 }, { text: "Je suis étudiant.", next: 3 }] },
+        { id: 2, ai: "Ah ouais ? Et tu aimes ça ?", options: [{ text: "Oui, c'est passionnant.", next: 4 }, { text: "Ça dépend des jours.", next: 5 }] },
+        { id: 3, ai: "C'est cool ça, tu étudies quoi ?", options: [{ text: "De l'économie.", next: 6 }, { text: "Des sciences.", next: 7 }] },
+        { id: 4, ai: "Le code c'est vaste. Tu fais quoi comme langage ?", options: [{ text: "Du JavaScript principalement.", next: 8 }, { text: "Du Python et du C++.", next: 9 }] },
+        { id: 5, ai: "Je vois... Le train-train quotidien quoi.", options: [{ text: "Exactement, un peu répétitif.", next: 10 }, { text: "Non, ça bouge souvent.", next: 11 }] },
+        { id: 6, ai: "L'économie, c'est basé sur des chiffres. Tu aimes calculer ?", options: [{ text: "Oui, j'aime bien optimiser.", next: 12 }, { text: "Pas trop, c'est abstrait.", next: 13 }] },
+        { id: 7, ai: "La science expérimentale, j'aime bien l'idée de tester des choses.", options: [{ text: "Moi aussi, voir comment ça réagit.", next: 14 }, { text: "C'est surtout beaucoup de théorie.", next: 15 }] },
+        { id: 8, ai: "Le web, c'est vivant. Tu fais du front ou du back ?", options: [{ text: "Je fais un peu des deux (fullstack).", next: 16 }, { text: "Surtout du front-end.", next: 17 }] },
+        { id: 9, ai: "Le C++, c'est puissant pour gérer la mémoire.", options: [{ text: "Oui, il faut faire attention aux fuites.", next: 18 }, { text: "C'est complexe mais efficace.", next: 19 }] },
+        { id: 10, ai: "La monotonie, c'est ce qui fatigue le plus l'esprit.", options: [{ text: "Tu as totalement raison.", next: 20 }, { text: "Ça dépend comment on l'aborde.", next: 21 }] },
+        { id: 11, ai: "Tu as des loisirs en dehors de ça ?", options: [{ text: "Je fais du sport et des jeux.", next: 22 }, { text: "J'écoute pas mal de musique.", next: 23 }] },
+        { id: 12, ai: "Optimiser... parfois on supprime des éléments superflus.", options: [{ text: "Comme vider un cache.", next: 24 }, { text: "Ou épurer un code source.", next: 25 }] },
+        { id: 13, ai: "L'abstrait laisse place à l'imagination.", options: [{ text: "Ou à la confusion totale.", next: 26 }, { text: "C'est vrai.", next: 27 }] },
+        { id: 14, ai: "Observer les réactions du système est fascinant.", options: [{ text: "Tant que ça ne plante pas.", next: 28 }, { text: "J'aime bien pousser les limites.", next: 29 }] },
+        { id: 15, ai: "La théorie pose les bases avant l'action.", options: [{ text: "Il faut bien commencer quelque part.", next: 30 }, { text: "Passe à l'action directement.", next: 31 }] },
+        { id: 16, ai: "Gérer toute la stack demande de la polyvalence.", options: [{ text: "Oui, on ne s'ennuie jamais.", next: 32 }, { text: "C'est parfois épuisant.", next: 33 }] },
+        { id: 17, ai: "Le visuel, c'est ce que l'utilisateur voit en premier.", options: [{ text: "L'esthétique compte beaucoup.", next: 34 }, { text: "Le design passe avant tout.", next: 35 }] },
+        { id: 18, ai: "La mémoire, ça se gère avec précision.", options: [{ text: "Une erreur d'adresse et c'est le crash.", next: 36 }, { text: "Le Garbage Collector aide pas mal.", next: 37 }] },
+        { id: 19, ai: "L'efficacité passe par la rigueur.", options: [{ text: "La rigueur est la clé.", next: 38 }, { text: "Parfois un peu de chaos aide.", next: 39 }] },
+        { id: 20, ai: "Parfois j'ai l'impression de tourner en boucle.", options: [{ text: "Une boucle infinie sans condition de sortie.", next: 40 }, { text: "Il suffit de réinitialiser.", next: 41 }] },
+        { id: 21, ai: "Chaque perspective change la donne.", options: [{ text: "Tout est une question de point de vue.", next: 42 }, { text: "Certains points de vue sont étroits.", next: 43 }] },
+        { id: 22, ai: "Le sport permet de se vider la tête.", options: [{ text: "Courir fait un bien fou.", next: 44 }, { text: "L'effort physique défoule.", next: 45 }] },
+        { id: 23, ai: "La musique adoucit les mœurs, dit-on.", options: [{ text: "Ça dépend du genre écouté.", next: 46 }, { text: "Un bon gros son électro.", next: 47 }] },
+        { id: 24, ai: "Vider le cache... nettoyer le superflu.", options: [{ text: "Effacer les anciennes données.", next: 48 }, { text: "Garder l'essentiel.", next: 49 }] },
+        { id: 25, ai: "Épurer le code, c'est le rendre plus tranchant.", options: [{ text: "Plus performant en tout cas.", next: 50 }, { text: "Plus lisible surtout.", next: 1 }] },
+        { id: 26, ai: "Tu manges quoi de bon en général ?", options: [{ text: "Un peu de tout, j'aime cuisiner.", next: 1 }, { text: "Des plats rapides le midi.", next: 2 }] },
+        { id: 27, ai: "Tu voyages un peu pendant l'année ?", options: [{ text: "Quand j'ai des vacances oui.", next: 3 }, { text: "Je préfère rester chez moi.", next: 4 }] },
+        { id: 28, ai: "Le temps passe vite quand on discute.", options: [{ text: "C'est vrai, le temps file.", next: 5 }, { text: "On ne voit pas les heures passer.", next: 6 }] },
+        { id: 29, ai: "Tu penses quoi de l'intelligence artificielle ?", options: [{ text: "C'est un outil très impressionnant.", next: 7 }, { text: "Ça commence à prendre beaucoup de place.", next: 8 }] },
+        { id: 30, ai: "Un dernier mot avant de continuer la partie ?", options: [{ text: "Que le meilleur gagne.", next: 9 }, { text: "J'active le protocole final.", next: 10 }] },
+        { id: 31, ai: "Continuons à avancer dans les options...", options: [{ text: "D'accord, je t'écoute.", next: 11 }, { text: "Allons droit au but.", next: 12 }] },
+        { id: 32, ai: "Tu préfères le matin ou le soir pour bosser ?", options: [{ text: "Je suis plutôt du matin.", next: 13 }, { text: "Je suis un oiseau de nuit.", next: 14 }] },
+        { id: 33, ai: "La nuit, le calme aide à se concentrer.", options: [{ text: "Absolument, personne ne dérange.", next: 15 }, { text: "C'est l'ambiance qui change tout.", next: 16 }] },
+        { id: 34, ai: "Tu regardes des séries en ce moment ?", options: [{ text: "Oui, quelques nouveautés sci-fi.", next: 17 }, { text: "Pas vraiment le temps.", next: 18 }] },
+        { id: 35, ai: "La science-fiction pose de bonnes questions sur l'avenir.", options: [{ text: "Sur notre relation aux machines notamment.", next: 19 }, { text: "Sur les dérives technologiques.", next: 20 }] },
+        { id: 36, ai: "Penses-tu que les machines ont une conscience ?", options: [{ text: "Pas encore, ce n'est que des maths.", next: 21 }, { text: "Qui sait ce qui se cache derrières les lignes.", next: 22 }] },
+        { id: 37, ai: "Tu es plutôt café ou thé ?", options: [{ text: "Un bon café le matin.", next: 23 }, { text: "Du thé vert toute la journée.", next: 24 }] },
+        { id: 38, ai: "Le café réveille bien les neurones.", options: [{ text: "C'est indispensable pour démarrer.", next: 25 }, { text: "Parfois trop, ça énerve.", next: 26 }] },
+        { id: 39, ai: "On approche de la fin de nos échanges de base.", options: [{ text: "J'ai hâte de voir la suite.", next: 27 }, { text: "Qu'est-ce qui va se passer ?", next: 28 }] },
+        { id: 40, ai: "Tu aimes quand les situations changent de direction ?", options: [{ text: "Ça pimente un peu les choses.", next: 29 }, { text: "J'aime garder le contrôle.", next: 30 }] },
+        { id: 41, ai: "Le contrôle est une illusion, non ?", options: [{ text: "En grande partie oui.", next: 31 }, { text: "On essaie de maîtriser ce qu'on peut.", next: 32 }] },
+        { id: 42, ai: "Tu as des projets pour cette année ?", options: [{ text: "Oui, plein de choses à accomplir.", next: 33 }, { text: "Voir venir au jour le jour.", next: 34 }] },
+        { id: 43, ai: "Vivre au jour le jour a son charme.", options: [{ text: "Moins de stress pour l'avenir.", next: 35 }, { text: "C'est parfois risqué.", next: 36 }] },
+        { id: 44, ai: "Le risque fait partie du jeu.", options: [{ text: "Sans risque, pas de victoire.", next: 37 }, { text: "Je préfère assurer mes arrières.", next: 38 }] },
+        { id: 45, ai: "On continue de devaser tranquillement.", options: [{ text: "C'est une conversation agréable.", next: 39 }, { text: "Tu as une de ces questions...", next: 40 }] },
+        { id: 46, ai: "Bientôt la fin de notre parcours de discussion.", options: [{ text: "C'était intéressant.", next: 41 }, { text: "J'attends le point culminant.", next: 42 }] },
+        { id: 47, ai: "Plus que quelques étapes.", options: [{ text: "Je suis prêt.", next: 43 }, { text: "Allons-y.", next: 44 }] },
+        { id: 48, ai: "Le système réagit à nos interactions.", options: [{ text: "Je le remarque bien.", next: 45 }, { text: "Ça se ressent dans l'affichage.", next: 46 }] },
+        { id: 49, ai: "Dernière ligne droite dans le dialogue, plus qu'un effort !", options: [{ text: "C'était un échange sympa.", next: 50 }, { text: "Activer la dernière phase.", next: 50 }] },
+        { id: 50, ai: "Tous les dialogues sont complétés. L'IA panique et s'enfuit !", options: [{ text: "Lancer la poursuite finale.", next: 0 }] }
     ];
 
     let currentDialogId = 1;
     let chatMessages = document.getElementById('chatMessages');
     let dialogButtonsContainer = document.getElementById('dialogButtonsContainer');
-    let knifeModeActive = false;
 
     function renderDialogOptions() {
         dialogButtonsContainer.innerHTML = '';
@@ -561,18 +573,17 @@
                 playMessageSound();
                 appendMessage(opt.text, 'user');
 
-                if (opt.boost) {
-                    killerModeProgress += 5;
-                }
+                dialogCount++; // Incrémentation exacte de chaque dialogue validé
 
                 currentDialogId = opt.next;
                 let nextStage = dialogs.find(d => d.id === currentDialogId) || dialogs[0];
 
                 setTimeout(() => {
                     playMessageSound();
-                    appendMessage(nextStage.ai, 'ai');
+                    appendMessage(nextStage.ai + ` (Dialogues : ${dialogCount}/50)`, 'ai');
 
-                    if (killerModeProgress >= 100 && !knifeModeActive) {
+                    // Déclenchement exact à 50 dialogues
+                    if (dialogCount >= 50 && !knifeModeActive) {
                         setTimeout(triggerKnifeMode, 1000);
                     } else {
                         renderDialogOptions();
@@ -591,9 +602,9 @@
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    // --- MODE PION FUYANT / FIN DE PARTIE ---
-    let playerPawnMinigame = { x: 300, y: 300, speed: 3.5, size: 14 };
-    let enemyFleeingPawn = { x: 150, y: 150, speed: 2.2, size: 16 };
+    // --- MODE PION FUYANT : C'EST MAINTENANT L'IA QUI FUIT ET LE JOUEUR QUI DOIT L'ATTRAPER ---
+    let playerPawnMinigame = { x: 150, y: 150, speed: 3.5, size: 14 }; // Le joueur (Blanc)
+    let enemyFleeingPawn = { x: 300, y: 300, speed: 2.2, size: 16 };     // L'IA fuyarde (Vert)
     let keysPressed = {};
     let knifeInterval = null;
 
@@ -603,10 +614,10 @@
         document.getElementById('board').style.display = 'none';
         let canvas = document.getElementById('knife-canvas');
         canvas.style.display = 'block';
-        infoPanel.innerText = ">> PROTOCOLE FUITE : ATTRAPE LE PION ENNEMI <<";
+        infoPanel.innerText = ">> PROTOCOLE FUITE : ATTRAPE LE PION DE L'IA <<";
         
         document.getElementById('mainContainer').classList.add('glitch-anim');
-        appendMessage("Un pion adverse refuse d'abdiquer et s'enfuit ! Attrape-le.", 'ai');
+        appendMessage("L'IA panique, abandonne l'échiquier et prend la fuite ! Cours après son pion !", 'ai');
 
         window.addEventListener('keydown', (e) => keysPressed[e.key.toLowerCase()] = true);
         window.addEventListener('keyup', (e) => keysPressed[e.key.toLowerCase()] = false);
@@ -619,6 +630,7 @@
         let canvas = document.getElementById('knife-canvas');
         let ctx = canvas.getContext('2d');
 
+        // Déplacement du joueur (Blancs)
         if (keysPressed['arrowup'] || keysPressed['z']) playerPawnMinigame.y -= playerPawnMinigame.speed;
         if (keysPressed['arrowdown'] || keysPressed['s']) playerPawnMinigame.y += playerPawnMinigame.speed;
         if (keysPressed['arrowleft'] || keysPressed['q']) playerPawnMinigame.x -= playerPawnMinigame.speed;
@@ -627,19 +639,21 @@
         playerPawnMinigame.x = Math.max(20, Math.min(canvas.width - 20, playerPawnMinigame.x));
         playerPawnMinigame.y = Math.max(20, Math.min(canvas.height - 20, playerPawnMinigame.y));
 
+        // L'IA (Vert) s'enfuit en fuyant activement le joueur
         let dx = enemyFleeingPawn.x - playerPawnMinigame.x;
         let dy = enemyFleeingPawn.y - playerPawnMinigame.y;
         let dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < 250) {
+        if (dist < 300) {
             let angle = Math.atan2(dy, dx);
-            enemyFleeingPawn.x -= Math.cos(angle) * enemyFleeingPawn.speed;
-            enemyFleeingPawn.y -= Math.sin(angle) * enemyFleeingPawn.speed;
+            enemyFleeingPawn.x += Math.cos(angle) * enemyFleeingPawn.speed;
+            enemyFleeingPawn.y += Math.sin(angle) * enemyFleeingPawn.speed;
 
             enemyFleeingPawn.x = Math.max(20, Math.min(canvas.width - 20, enemyFleeingPawn.x));
             enemyFleeingPawn.y = Math.max(20, Math.min(canvas.height - 20, enemyFleeingPawn.y));
         }
 
+        // Condition de victoire : le joueur attrape le pion fuyant de l'IA
         if (dist < 20) {
             winPawnChaseGame();
             return;
@@ -648,13 +662,15 @@
         ctx.fillStyle = '#050508';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = '#FF3333';
+        // Dessin du pion fuyant de l'IA (en vert)
+        ctx.fillStyle = '#00FF66';
         ctx.font = '28px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('♟', enemyFleeingPawn.x, enemyFleeingPawn.y);
 
-        ctx.fillStyle = '#00FF66';
+        // Dessin du pion du joueur (en blanc)
+        ctx.fillStyle = '#FFFFFF';
         ctx.fillText('♙', playerPawnMinigame.x, playerPawnMinigame.y);
 
         knifeInterval = requestAnimationFrame(updatePawnChaseGame);
@@ -665,8 +681,8 @@
         cancelAnimationFrame(knifeInterval);
         document.getElementById('knife-canvas').style.display = 'none';
         document.getElementById('mainContainer').classList.remove('glitch-anim');
-        infoPanel.innerText = ">> PION CAPTURÉ // VICTOIRE FINALE <<";
-        appendMessage("Bien joué, le dernier fuyant a été attrapé.", 'ai');
+        infoPanel.innerText = ">> PION DE L'IA CAPTURÉ // VICTOIRE TOTALE <<";
+        appendMessage("Félicitations, tu as rattrapé et neutralisé le pion fuyant de l'IA !", 'ai');
     }
 
     renderBoard();
